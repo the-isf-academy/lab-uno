@@ -5,6 +5,7 @@
 
 from card import Card
 from random import shuffle
+import pandas as pd
 
 class Deck(object):
     """Creates a uno Deck object.
@@ -14,16 +15,12 @@ class Deck(object):
         empty (bool): Whether the deck is generated with or without cards
     """
 
-    basic_deck = [Card("red",1),Card("red",2),Card("red",3),Card("blue",1),Card("blue",2),Card("blue",3),Card("yellow",'reverse'),Card(None, None, "wild")]
-
-    def __init__(self, filename=None, empty=False):
-        self.cards = []
-        if not empty:
-            if filename:
-                self.cards = self.read_cards_from_file(filename)
-            else:
-                self.cards = self.basic_deck
-            self.shuffle_deck()
+    def __init__(self, filename=None):
+        if filename:
+            self.cards = self.read_cards_from_file(filename)
+        else:
+            self.cards = []
+        self.shuffle_deck()
 
     def read_cards_from_file(self, filename):
         """ Reads cards from text file. Uses basic deck if execption encountered during read.
@@ -36,22 +33,13 @@ class Deck(object):
             list of Card: The list of cards created in the deck
         """
         try:
-            f = open(filename, "r")
-            cards =[]
-            for card_string in f.readlines():
-                card_string = card_string.strip("\n")
-                card_list = card_string.split(',')
-                color = None if card_list[0] == '' else card_list[0]
-                number = None if card_list[1] == '' else int(card_list[1])
-                special = None if card_list[2] == '' else card_list[2]
-                card = Card(color, number, special)
-                cards.append(card)
-            f.close()
+            cards = []
+            deckDF = pd.read_csv(filename).fillna('')
+            for index, row in deckDF.iterrows():
+                cards.append(Card(row.color, row.number, row.special))
             return cards
         except Exception as e:
             print("Exception while reading deck: ", e)
-            print("Using basic deck instead.")
-            return self.basic_deck
 
     def add_card(self, card):
         """ Adds a card to the deck
