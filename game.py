@@ -5,7 +5,7 @@
 
 from deck import Deck
 from card import Card
-from player import Player
+from player import HumanPlayer, ComputerPlayer
 from random import choice
 from view import TerminalView
 
@@ -33,9 +33,9 @@ class UnoGame(object):
         self.top_card = self.deal_one_card()
         self.players = []
         for name in human_names:
-            self.players.append(Player(name, "human"))
+            self.players.append(HumanPlayer(name))
         for i in range(self.NUM_PLAYERS-len(human_names)):
-            self.players.append(Player("Computer {}".format(i)))   # Computer strategy choice will ultimately go here
+            self.players.append(ComputerPlayer("Computer {}".format(i)))   # Computer strategy choice will ultimately go here
 
     def play(self):
         """ Plays an uno game
@@ -50,7 +50,6 @@ class UnoGame(object):
         while self.turns_remaining > 0 and not win:
             win = self.play_turn()
             self.turns_remaining -= 1
-
         if win:
             winner = self.players[self.current_player_index]
             self.view.show_winning_game(winner)
@@ -127,7 +126,7 @@ class UnoGame(object):
         """ Increments/decrements the current_player_index depending on the direction
         of the game. Resets when number drops below 0 or goes over 3.
         """
-        self.current_player_index = (self.current_player_index + self.direction)%4
+        self.current_player_index = (self.current_player_index + self.direction) % len(self.players)
 
     def current_player(self):
         """Returns the current Player object.
@@ -145,8 +144,7 @@ class UnoGame(object):
 
         NOTE: this sets the color of the wild card to the players choice to maintain game state.
         """
-        self.current_player().pick_color()
-        new_color = self.players[self.current_player_index].pick_color()
+        new_color =self.current_player().pick_color()
         self.top_card.color = new_color
         self.view.show_wild_card_played(self.current_player())
 
@@ -174,7 +172,7 @@ class UnoGame(object):
         self.deal_n_cards(4, next_player)
 
 def set_up_game():
-    rounds = input("How many turns do you want to play for? ")
+    turns = input("How many turns do you want to play for? ")
     deck_file = input("Input the filepath of the deck you want to use (enter to use basic deck): ").strip()
     if not deck_file:
         deck_file = "uno_cards_basic.csv"
@@ -182,10 +180,10 @@ def set_up_game():
     names = []
     for i in range(int(no_players)):
         names.append(input("What is the name of human player {}? ".format(i)))
-    game = UnoGame(names, deck_file, int(rounds))
+    game = UnoGame(names, deck_file, int(turns))
     game.play()
 
 if __name__ == "__main__":
-    game = UnoGame(['Chris'], "uno_cards_basic.csv", 10)
-    game.play()
-
+    # game = UnoGame(['Chris'], "uno_cards_basic.csv", 10)
+    # game.play()
+    set_up_game()
