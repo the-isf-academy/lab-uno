@@ -1,6 +1,6 @@
 
 class TerminalView:
-    """Handles input and output from a Game. 
+    """Handles input and output from a Game.
     This could be pedagogically valuable because it would simplify code in
     `UnoGame` and because it would reinforce the idea that the same UnoGame could be
     used as the backend of a GUI or web-based implementation.
@@ -8,7 +8,7 @@ class TerminalView:
     re-skinning the game (e.g. making it snarky), whereas over in game.py it's about the
     algorithms and interactions.
     It's also another straightforward example of objects interacting.
-    
+
     Most important point: The View has no idea what is going on.
     """
 
@@ -32,8 +32,14 @@ class TerminalView:
     def show_drawing_card(self, player):
         print("{} drew a card.".format(player.name))
 
+    def show_invalid_card(self, player, card, top_card):
+        print("{} can't be played on {}. {} must draw 2 cards.".format(card, top_card, player.name))
+
     def show_shuffling_deck(self):
         print("Deck is out of cards! Shuffling discard pile.")
+
+    def show_empty_decks(self):
+        print("All cards have been dealt! Someone play a card!")
 
     def show_ending_turn(self, player):
         print("{}, your turn is over.".format(player.name))
@@ -41,7 +47,7 @@ class TerminalView:
 
     def show_winning_game(self, player):
         print("🎉{} WINS!!!🎉".format(player.name))
-        
+
     def show_out_of_cards(self):
         print("Not enough cards in deck. Ending game.")
 

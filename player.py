@@ -27,23 +27,6 @@ class Player(object):
         """
         self.hand.append(card)
 
-    def valid_card_choice(self, card_choice, top_card):
-        """ Check to see if the card is playable given the top card
-
-        Args:
-            card_choice (Card): a potentially playable Card
-            top_card (Card): Card at the top of the deck
-
-        Returns:
-            (bool) for whether the card is playable
-        """
-        if card_choice:
-            if card_choice.special == "wild" or card_choice.special == "wild-draw-four":
-                return True
-            if (top_card.number and top_card.number == card_choice.number) or (top_card.color and top_card.color == card_choice.color) or (top_card.special and top_card.special == card_choice.special):
-                return True
-        return False
-
     def print_hand(self):
         """ Prints the player's current hand to the console
         """
@@ -55,7 +38,7 @@ class HumanPlayer(Player):
     a Player can do and more.
     """
 
-    def pick_color(self):
+    def choose_color(self):
         """Asks the player to choose a color
         """
         new_color = None
@@ -64,7 +47,7 @@ class HumanPlayer(Player):
             new_color = new_color.lower()
         return new_color
 
-    def play_turn(self, top_card):
+    def choose_card(self, top_card):
         """Asks the player to choose a card from hand and enforces the rules of Uno
 
         Args:
@@ -75,32 +58,59 @@ class HumanPlayer(Player):
         """
         input("Press enter to see your hand.")
         self.print_hand()
-        card_choice = None
-        while not self.valid_card_choice(card_choice, top_card):
-            card_choice_num = "n"
-            while not card_choice_num.isdigit() or (int(card_choice_num) <= 0 or int(card_choice_num) >= len(self.hand)):
-                card_choice_num = input("Input card number or type \'draw\' to draw new card: ")
-                if card_choice_num == "draw":
-                    return None
-            card_choice = self.hand[int(card_choice_num)]
+        card_choice_num = "n"
+        while not card_choice_num.isdigit() or (int(card_choice_num) < 0 or int(card_choice_num) >= len(self.hand)):
+            card_choice_num = input("Input card number or type \'draw\' to draw new card: ")
+            if card_choice_num == "draw":
+                return None
+        card_choice = self.hand[int(card_choice_num)]
         self.hand.remove(card_choice)
         return card_choice
 
-
 class ComputerPlayer(Player):
-    """HummanPlayer extends the Player class. A HumanPlayer can do everything
-    a Player can do and more.
+    """ComputerPlayer extends the ComputerPlayer class. AComputerPlayer can do
+    everything a Player can do and more. Uses a basic (read: bad) strategy for choices.
     """
 
-    def pick_color(self):
+    def choose_color(self):
+        """Asks the player to choose a color
+        """
+        return "red"
+
+    def choose_card(self, top_card):
+        """ Plays one turn by randomly choosing a card from hand.
+
+        Args:
+            hand (list of Card): the calling player's hand
+            top_card (Card): the top card currently displayed on the deck
+
+        Returns:
+            (Card) a valid choice of Card
+        """
+        return self.hand.pop()
+
+class RandomComputerPlayer(ComputerPlayer):
+    """RandomComputerPlayer extends the ComputerPlayer class.
+    The RandomComputerPlayer overrides the ComputerPlayer choice functions to
+    randomly choose a color or valid card.
+    """
+
+    def __init__(self, name, valid_card_choice_function):
+        """ Creates a ComputerPlayer object
+        """
+        super().__init__(name)
+        self.valid_card_choice = valid_card_choice_function
+
+    def choose_color(self):
         """Asks the player to choose a color
         """
         return choice(["red","yellow","green","blue"])
 
-    def play_turn(self, top_card):
+    def choose_card(self, top_card):
         """ Plays one turn by randomly choosing a card from hand.
 
         Args:
+            hand (list of Card): the calling player's hand
             top_card (Card): the top card currently displayed on the deck
 
         Returns:
@@ -108,7 +118,7 @@ class ComputerPlayer(Player):
         """
         shuffle(self.hand)
         for card in self.hand:
-            if self.valid_card_choice(card, top_card):
+            if self.valid_card_choice(card):
                 self.hand.remove(card)
                 return card
         return None

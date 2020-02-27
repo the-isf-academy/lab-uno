@@ -5,7 +5,7 @@
 
 from deck import Deck
 from card import Card
-from player import HumanPlayer, ComputerPlayer
+from player import HumanPlayer, ComputerPlayer, RandomComputerPlayer
 from random import choice
 from view import TerminalView
 
@@ -23,7 +23,7 @@ class UnoGame(object):
     CLOCKWISE = 1
     ANTICLOCKWISE = -1
 
-    def __init__(self, human_names, deck_file=None, total_turns=10):
+    def __init__(self, human_names, computer_strategies, deck_file=None, total_turns=10):
         self.view = TerminalView()
         self.turns_remaining = total_turns
         self.deck = Deck(deck_file)
@@ -34,8 +34,11 @@ class UnoGame(object):
         self.players = []
         for name in human_names:
             self.players.append(HumanPlayer(name))
-        for i in range(self.NUM_PLAYERS-len(human_names)):
-            self.players.append(ComputerPlayer("Computer {}".format(i)))   # Computer strategy choice will ultimately go here
+        for i, strategy_string in enumerate(computer_strategies):
+            if strategy_string.lower() == "random":
+                self.players.append(RandomComputerPlayer("Computer {}".format(i), self.valid_card_choice))
+            else:
+                self.players.append(ComputerPlayer("Computer {}".format(i)))
 
     def play(self):
         """ Plays an uno game
@@ -59,17 +62,22 @@ class UnoGame(object):
         """
         player = self.current_player()
         self.view.show_beginning_turn(player, self.top_card)
-        card = player.play_turn(self.top_card)
+        card = player.choose_card(self.top_card)
         if card:
             self.view.show_played_card(player, card)
-            if self.top_card.special == 'wild' or self.top_card.special == 'wild-draw-four':
-                self.top_card.color = None   #reseting the color of the wild card before it goes into the discard pile
-            self.discard.add_card(self.top_card)
-            self.top_card = card
-            if len(player.hand) == 0:
-                return True
-            if card.special:
-                self.special_card_action(card)
+            if self.valid_card_choice(card):
+                if self.top_card.special == 'wild' or self.top_card.special == 'wild-draw-four':
+                    self.top_card.color = None   #reseting the color of the wild card before it goes into the discard pile
+                self.discard.add_card(self.top_card)
+                self.top_card = card
+                if len(player.hand) == 0:
+                    return True
+                if card.special:
+                    self.special_card_action(card)
+            else:
+                self.view.show_invalid_card(player, card, self.top_card)
+                player.add_to_hand(card)
+                self.deal_n_cards(2, player)
         else:
             self.deal_n_cards(1, player)
         self.increment_player_num()
@@ -106,6 +114,9 @@ class UnoGame(object):
         cards = []
         for i in range(n):
             if self.deck.get_num_cards() == 0:
+                if self.discard.get_num_cards() == 0:
+                    self.view.show_empty_decks()
+                    return None
                 self.view.show_shuffling_deck()
                 self.discard.shuffle_deck()
                 empty_deck = self.deck
@@ -144,7 +155,7 @@ class UnoGame(object):
 
         NOTE: this sets the color of the wild card to the players choice to maintain game state.
         """
-        new_color =self.current_player().pick_color()
+        new_color =self.current_player().choose_color()
         self.top_card.color = new_color
         self.view.show_wild_card_played(self.current_player())
 
@@ -171,6 +182,23 @@ class UnoGame(object):
         next_player = self.next_player()
         self.deal_n_cards(4, next_player)
 
+    def valid_card_choice(self, card_choice):
+        """ Check to see if the card is playable given the top card
+
+        Args:
+            card_choice (Card): a potentially playable Card
+            top_card (Card): Card at the top of the deck
+
+        Returns:
+            (bool) for whether the card is playable
+        """
+        if card_choice:
+            if card_choice.special == "wild" or card_choice.special == "wild-draw-four":
+                return True
+            if (self.top_card.number and self.top_card.number == card_choice.number) or (self.top_card.color and self.top_card.color == card_choice.color) or (self.top_card.special and self.top_card.special == card_choice.special):
+                return True
+        return False
+
 def set_up_game():
     turns = input("How many turns do you want to play for? ")
     deck_file = input("Input the filepath of the deck you want to use (enter to use basic deck): ").strip()
@@ -180,10 +208,13 @@ def set_up_game():
     names = []
     for i in range(int(no_players)):
         names.append(input("What is the name of human player {}? ".format(i)))
-    game = UnoGame(names, deck_file, int(turns))
+    computer_strategies = []
+    for i in range(4-int(no_players)):
+        computer_strategies.append(input("What strategy should Computer{} use (enter for basic strategy)? ".format(i)))
+    game = UnoGame(names, computer_strategies, deck_file, int(turns))
     game.play()
 
 if __name__ == "__main__":
-    # game = UnoGame(['Chris'], "uno_cards_basic.csv", 10)
-    # game.play()
-    set_up_game()
+    game = UnoGame([], ['','','','random'], "uno_cards_basic.csv", 100)
+    game.play()
+    # set_up_game()
