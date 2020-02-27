@@ -38,7 +38,7 @@ class TestUnoLab(unittest.TestCase):
             winner = game.play()
             game_stats[winner] += 1
             sys.stdout = stdout
-            if i%50 == 0:
+            if i%25 == 0:
                 sys.stdout.write(".")
                 sys.stdout.flush()
         print("\nTEST COMPLETE. GAME STATS:")

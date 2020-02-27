@@ -37,7 +37,7 @@ class UnoGame(object):
         for i, strategy_string in enumerate(computer_strategies):
             if strategy_string.lower() == "random":
                 self.players.append(RandomComputerPlayer("Computer {}".format(i), self.valid_card_choice))
-            if strategy_string.lower() == "random":
+            if strategy_string.lower() == "student":
                 # STUDENT CODE HERE ⬇️ (replace line below)
                 self.players.append(ComputerPlayer("Computer {}".format(i)))
                 # END STUDENT CODE HERE
