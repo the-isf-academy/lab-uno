@@ -37,6 +37,10 @@ class UnoGame(object):
         for i, strategy_string in enumerate(computer_strategies):
             if strategy_string.lower() == "random":
                 self.players.append(RandomComputerPlayer("Computer {}".format(i), self.valid_card_choice))
+            if strategy_string.lower() == "random":
+                # STUDENT CODE HERE ⬇️ (replace line below)
+                self.players.append(ComputerPlayer("Computer {}".format(i)))
+                # END STUDENT CODE HERE
             else:
                 self.players.append(ComputerPlayer("Computer {}".format(i)))
 
@@ -56,6 +60,7 @@ class UnoGame(object):
         if win:
             winner = self.players[self.current_player_index]
             self.view.show_winning_game(winner)
+            return winner.name
 
     def play_turn(self):
         """ Plays one round of uno
@@ -147,7 +152,7 @@ class UnoGame(object):
     def next_player(self):
         """returns the next Player object depending on the direction of the game
         """
-        next_player_index = (self.current_player_index + self.DIRECTION) % len(self.players)
+        next_player_index = (self.current_player_index + self.direction) % len(self.players)
         return self.players[next_player_index]
 
     def wild(self):
@@ -157,23 +162,26 @@ class UnoGame(object):
         """
         new_color =self.current_player().choose_color()
         self.top_card.color = new_color
-        self.view.show_wild_card_played(self.current_player())
+        self.view.show_card_action(self.current_player(), self.next_player(), self.top_card)
 
     def skip(self):
         """ Skips the next player's turn
         """
         self.increment_player_num()
+        self.view.show_card_action(self.current_player(), self.next_player(), self.top_card)
 
     def reverse(self):
         """ Reverses the direction of the game
         """
         self.direction *= -1
+        self.view.show_card_action(self.current_player(), self.next_player(), self.top_card)
 
     def draw_two(self):
         """ causes the next player to draw 2 cards.
         """
         next_player = self.next_player()
         self.deal_n_cards(2, next_player)
+        self.view.show_card_action(self.current_player(), self.next_player(), self.top_card)
 
     def wild_draw_four(self):
         """ changes the top card color and makes the next player draw 4 card
@@ -181,6 +189,7 @@ class UnoGame(object):
         self.wild()
         next_player = self.next_player()
         self.deal_n_cards(4, next_player)
+        self.view.show_card_action(self.current_player(), self.next_player(), self.top_card)
 
     def valid_card_choice(self, card_choice):
         """ Check to see if the card is playable given the top card
