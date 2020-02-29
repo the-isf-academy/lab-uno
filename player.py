@@ -139,3 +139,10 @@ class RandomComputerPlayer(ComputerPlayer):
             self.hand.remove(chosen_card)
             return chosen_card
         return None
+
+# ----------- 💻 PART 3️⃣: WRITE YOUR CODE HERE ⬇️ -----------
+
+class StudentComputerPlayer(ComputerPlayer):
+    """StudentComputerPlayer extends the ComputerPlayer class.
+    Can you get your computer player to consistently win more than 30% of games?
+    """

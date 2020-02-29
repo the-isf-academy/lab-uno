@@ -32,9 +32,9 @@ The following sets of cards are included in this repo:
 
 ### Rules
 
-The rules of this implementation of uno are based on the ones found here: http://play-k.kaserver5.org/Uno.html
+The rules of this implementation of uno are based on the ones found here: [http://play-k.kaserver5.org/Uno.html](http://play-k.kaserver5.org/Uno.html)
 
-Some exepctions:
+Some exceptions:
 
 * If a player draws a card because they cannot play during their turn, they cannot immediately play that card (they must wait until their next turn).
 * If a player plays an invalid card, they must return the card to their hand, draw two cards and end their turn.

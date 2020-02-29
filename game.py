@@ -5,11 +5,10 @@
 
 from deck import Deck
 from card import Card
-from player import HumanPlayer, ComputerPlayer, RandomComputerPlayer
+from player import HumanPlayer, ComputerPlayer, RandomComputerPlayer, StudentComputerPlayer
 from random import choice
 from view import TerminalView
 import sys, getopt
-
 
 class UnoGame(object):
     """Creates an instance of an UnoGame.
@@ -45,21 +44,17 @@ class UnoGame(object):
             if strategy_string.lower() == "random":
                 self.players.append(RandomComputerPlayer("Computer {}".format(i)))
             elif strategy_string.lower() == "student":
-                # STUDENT CODE HERE ⬇️ (replace line below)
-                self.players.append(ComputerPlayer("Computer {}".format(i)))
-                # END STUDENT CODE HERE
+                self.players.append(StudentComputerPlayer("Computer {}".format(i)))
             else:
                 self.players.append(ComputerPlayer("Computer {}".format(i)))
 
     def play(self):
         """ Plays an uno game
+
+        Returns:
+            (str) name of the game winner
         """
-        if self.deck.get_num_cards() < self.START_CARDS*self.NUM_PLAYERS:
-            self.view.show_out_of_cards()
-            return False
-        for i in range(self.START_CARDS):
-            for player in self.players:
-                self.deal_one_card(player)
+        self.deal_starting_cards()
         win = False
         while self.turns_remaining > 0 and not win:
             win = self.play_turn()
@@ -69,8 +64,22 @@ class UnoGame(object):
             self.view.show_winning_game(winner)
             return winner.name
 
+    def deal_starting_cards(self):
+        """
+        Deals cards to all players to begin the games
+        """
+        if self.deck.get_num_cards() < self.START_CARDS*self.NUM_PLAYERS:
+            self.view.show_out_of_cards()
+            return False
+        for i in range(self.START_CARDS):
+            for player in self.players:
+                self.deal_one_card(player)
+
     def play_turn(self):
         """ Plays one round of uno
+
+        Returns:
+            (bool) whether the game has been won by the current player
         """
         player = self.current_player()
         self.view.show_beginning_turn(player, self.top_card)
@@ -94,22 +103,6 @@ class UnoGame(object):
             self.deal_n_cards(1, player)
         self.increment_player_num()
         return False
-
-    def special_card_action(self, card):
-        """ Deals with a special card's action
-        """
-        if card.special == 'wild-draw-four':
-            self.wild_draw_four()
-        elif card.special == 'draw-two':
-            self.draw_two()
-        elif card.special == 'wild':
-            self.wild()
-        elif card.special == 'skip':
-            self.skip()
-        elif card.special == 'reverse':
-            self.reverse()
-        else:
-            raise ValueError("UnoGame doesn't know how to play special card: {}".format(card.special))
 
     def deal_n_cards(self, n, player=None):
         """ Takes n cards from the Deck and deals them to a Player or returns the
@@ -142,7 +135,11 @@ class UnoGame(object):
         return cards
 
     def deal_one_card(self, player=None):
-        "Just makes life a little easier."
+        """Just makes life a little easier.
+
+        Args:
+            player (Player): optional player to deal the card to
+        """
         return self.deal_n_cards(1, player)[0]
 
     def increment_player_num(self):
@@ -157,46 +154,10 @@ class UnoGame(object):
         return self.players[self.current_player_index]
 
     def next_player(self):
-        """returns the next Player object depending on the direction of the game
+        """Returns the next Player object depending on the direction of the game
         """
         next_player_index = (self.current_player_index + self.direction) % len(self.players)
         return self.players[next_player_index]
-
-    def wild(self):
-        """Allows the current player to change the top card color.
-
-        NOTE: this sets the color of the wild card to the players choice to maintain game state.
-        """
-        new_color =self.current_player().choose_color()
-        self.top_card.color = new_color
-        self.view.show_card_action(self.current_player(), self.next_player(), self.top_card)
-
-    def skip(self):
-        """ Skips the next player's turn
-        """
-        self.increment_player_num()
-        self.view.show_card_action(self.current_player(), self.next_player(), self.top_card)
-
-    def reverse(self):
-        """ Reverses the direction of the game
-        """
-        self.direction *= -1
-        self.view.show_card_action(self.current_player(), self.next_player(), self.top_card)
-
-    def draw_two(self):
-        """ causes the next player to draw 2 cards.
-        """
-        next_player = self.next_player()
-        self.deal_n_cards(2, next_player)
-        self.view.show_card_action(self.current_player(), self.next_player(), self.top_card)
-
-    def wild_draw_four(self):
-        """ changes the top card color and makes the next player draw 4 card
-        """
-        self.wild()
-        next_player = self.next_player()
-        self.deal_n_cards(4, next_player)
-        self.view.show_card_action(self.current_player(), self.next_player(), self.top_card)
 
     def valid_card_choice(self, card_choice):
         """ Check to see if the card is playable given the top card
@@ -214,6 +175,51 @@ class UnoGame(object):
                 return True
         return False
 
+    def wild(self):
+        """Allows the current player to change the top card color.
+
+        NOTE: this sets the color of the wild card to the players choice to maintain game state.
+        """
+        new_color = self.current_player().choose_color()
+        self.top_card.color = new_color
+
+    def skip(self):
+        """ Skips the next player's turn
+        """
+        self.increment_player_num()
+
+    def reverse(self):
+        """ Reverses the direction of the game
+        """
+        self.direction *= -1
+
+# ----------- 💻 PART 2️⃣: WRITE YOUR CODE HERE ⬇️ -----------
+
+    # Edit this function to include calls to your special card functions
+    def special_card_action(self, card):
+        """ Deals with a special card's action
+
+        Args:
+            card (Card): they special card that was played
+        """
+        if card.special == 'wild':
+            self.wild()
+        elif card.special == 'skip':
+            self.skip()
+        elif card.special == 'reverse':
+            self.reverse()
+        else:
+            raise ValueError("UnoGame doesn't know how to play special card: {}".format(card.special))
+        self.view.show_card_action(self.current_player(), self.next_player(), self.top_card)
+
+    # Define your draw_two function here
+
+
+    # Define your wild_draw_four() function here
+
+
+# -------------------- END OF PART 2️⃣ CODE ⬆️ --------------------
+
 def set_up_game():
     turns = input("How many turns do you want to play for? ")
     deck_file = input("Input the filepath of the deck you want to use (enter to use basic deck): ").strip()
@@ -226,8 +232,7 @@ def set_up_game():
     computer_strategies = []
     for i in range(4-int(no_players)):
         computer_strategies.append(input("What strategy should Computer{} use (enter for basic strategy)? ".format(i)))
-    game = UnoGame(names, computer_strategies, deck_file, int(turns))
-    game.play()
+    return UnoGame(names, computer_strategies, deck_file, int(turns))
 
 if __name__ == "__main__":
     opts, args = getopt.getopt(sys.argv[1:],"ah:c:f:t:")
@@ -250,6 +255,6 @@ if __name__ == "__main__":
             if opt == '-t':
                 turns = arg
         game = UnoGame(humans, computers, deck_file, turns)
-        game.play()
     else:
-        set_up_game()
+        game = set_up_game()
+    game.play()

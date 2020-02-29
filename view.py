@@ -12,9 +12,11 @@ class TerminalView:
     Most important point: The View has no idea what is going on.
     """
 
+# ----------- 💻 PART 1️⃣: EDIT THE CODE HERE ⬇️ -----------
+
     CARD_ACTION_MESSAGES = {
-        "wild-draw-four": "{player.name} drew four cards and set the color to {card.color}",
-        "draw-two": "{player.name} drew two cards!",
+        "wild-draw-four": "{next_player.name} drew four cards and set the color to {card.color}",
+        "draw-two": "{next_player.name} drew two cards!",
         "wild": "{player.name} set the color to {card.color}",
         "skip": "Skipped {next_player.name}!",
         "reverse": "Change directions!",
