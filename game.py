@@ -8,6 +8,7 @@ from card import Card
 from player import HumanPlayer, ComputerPlayer, RandomComputerPlayer
 from random import choice
 from view import TerminalView
+import sys, getopt
 
 
 class UnoGame(object):
@@ -16,12 +17,14 @@ class UnoGame(object):
         deck_file (str): The filepath to the deck of cards
         total_rounds (int): The number of rounds to play before ending the game
         human_names (list of str): names of human player (up to 4)
+        computer_strategies (list of str): names of strategies for computer players ()
 
     """
     START_CARDS = 7
     NUM_PLAYERS = 4
     CLOCKWISE = 1
     ANTICLOCKWISE = -1
+    COLORS = ["red", "blue", "green", "yellow"]
 
     def __init__(self, human_names, computer_strategies, deck_file=None, total_turns=10):
         self.view = TerminalView()
@@ -31,13 +34,17 @@ class UnoGame(object):
         self.direction = self.CLOCKWISE
         self.current_player_index = 0
         self.top_card = self.deal_one_card()
+        if "wild" in self.top_card.special:
+            self.top_card.color = choice(self.COLORS)
         self.players = []
         for name in human_names:
             self.players.append(HumanPlayer(name))
-        for i, strategy_string in enumerate(computer_strategies):
+        for i in range (4-len(human_names)-len(computer_strategies)):
+            computer_strategies.append("basic")
+        for i, strategy_string in enumerate(computer_strategies[:(4-len(human_names))]):
             if strategy_string.lower() == "random":
-                self.players.append(RandomComputerPlayer("Computer {}".format(i), self.valid_card_choice))
-            if strategy_string.lower() == "student":
+                self.players.append(RandomComputerPlayer("Computer {}".format(i)))
+            elif strategy_string.lower() == "student":
                 # STUDENT CODE HERE ⬇️ (replace line below)
                 self.players.append(ComputerPlayer("Computer {}".format(i)))
                 # END STUDENT CODE HERE
@@ -196,7 +203,6 @@ class UnoGame(object):
 
         Args:
             card_choice (Card): a potentially playable Card
-            top_card (Card): Card at the top of the deck
 
         Returns:
             (bool) for whether the card is playable
@@ -224,6 +230,26 @@ def set_up_game():
     game.play()
 
 if __name__ == "__main__":
-    game = UnoGame([], ['','','','random'], "uno_cards_basic.csv", 100)
-    game.play()
-    # set_up_game()
+    opts, args = getopt.getopt(sys.argv[1:],"ah:c:f:t:")
+    humans = ['Chris']
+    computers = ['random']
+    deck_file = 'uno_cards.csv'
+    turns = 100
+    if len(opts) > 0:
+        for opt, arg in opts:
+            if opt == '-a':
+                game = UnoGame(humans, computers, deck_file, turns)
+                game.play()
+                sys.exit(2)
+            if opt == '-h':
+                humans = arg.split('-')
+            if opt == '-c':
+                computers = arg.split('-')
+            if opt == '-f':
+                deck_file = arg
+            if opt == '-t':
+                turns = arg
+        game = UnoGame(humans, computers, deck_file, turns)
+        game.play()
+    else:
+        set_up_game()

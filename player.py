@@ -19,6 +19,29 @@ class Player(object):
         self.name = name
         self.hand = []
 
+    def choose_color(self):
+        raise NotImplementedError
+
+    def choose_card(self, top_card):
+        raise NotImplementedError
+
+    def get_valid_card_choices_from_hand(self, top_card):
+        """ Check to see if the card is playable given the top card
+
+        Args:
+            top_card (Card): Card at the top of the deck
+
+        Returns:
+            (bool) for whether the card is playable
+        """
+        valid_cards = []
+        for card in self.hand:
+            if card.special == "wild" or card.special == "wild-draw-four":
+                valid_cards.append(card)
+            if (top_card.number and top_card.number == card.number) or (top_card.color and top_card.color == card.color) or (top_card.special and top_card.special == card.special):
+                valid_cards.append(card)
+        return valid_cards
+
     def add_to_hand(self, card):
         """ Adds a card to a player's hand.
 
@@ -95,12 +118,6 @@ class RandomComputerPlayer(ComputerPlayer):
     randomly choose a color or valid card.
     """
 
-    def __init__(self, name, valid_card_choice_function):
-        """ Creates a ComputerPlayer object
-        """
-        super().__init__(name)
-        self.valid_card_choice = valid_card_choice_function
-
     def choose_color(self):
         """Asks the player to choose a color
         """
@@ -116,9 +133,9 @@ class RandomComputerPlayer(ComputerPlayer):
         Returns:
             (Card) a valid choice of Card
         """
-        shuffle(self.hand)
-        for card in self.hand:
-            if self.valid_card_choice(card):
-                self.hand.remove(card)
-                return card
+        valid_choices = self.get_valid_card_choices_from_hand(top_card)
+        if len(valid_choices) > 0:
+            chosen_card = choice(valid_choices)
+            self.hand.remove(chosen_card)
+            return chosen_card
         return None

@@ -18,11 +18,25 @@
 
 import unittest
 import sys, io
-
-from game import UnoGame
+from tqdm import tqdm
 from collections import defaultdict
 
+
+from game import UnoGame
+
 class TestUnoLab(unittest.TestCase):
+
+    def test_draw_two(self):
+        """
+        Test checking the implementation of the draw_two() function.
+        """
+        pass
+
+    def test_wild_draw_four(self):
+        """
+        Test checking the implementation of the wild_draw_four() function.
+        """
+        pass
 
     def test_strategy(self):
         """
@@ -31,16 +45,16 @@ class TestUnoLab(unittest.TestCase):
         print("\n\nTESTING STUDENT'S COMPUTER STRATEGY.")
         print("PLAYING 1000 STUDENT (ComputerO) vs RANDOM GAMES:")
         game_stats = defaultdict(lambda : 0)
-        for i in range(1000):
+        for i in tqdm(range(1000)):
             stdout = sys.stdout
             sys.stdout = io.StringIO()
             game = UnoGame([], ['student','random','random','random'], "uno_cards.csv", 500)
             winner = game.play()
             game_stats[winner] += 1
             sys.stdout = stdout
-            if i%25 == 0:
-                sys.stdout.write(".")
-                sys.stdout.flush()
+            # if i%25 == 0:
+            #     sys.stdout.write(".")
+            #     sys.stdout.flush()
         print("\nTEST COMPLETE. GAME STATS:")
         print("______________________")
         print("| Player.......Win % |")

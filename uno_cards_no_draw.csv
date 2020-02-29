@@ -3,10 +3,6 @@ color,number,special
 ,,wild
 ,,wild
 ,,wild
-,,wild-draw-four
-,,wild-draw-four
-,,wild-draw-four
-,,wild-draw-four
 blue,0,
 blue,1,
 blue,1,
@@ -26,8 +22,6 @@ blue,8,
 blue,8,
 blue,9,
 blue,9,
-blue,,draw-two
-blue,,draw-two
 blue,,skip
 blue,,skip
 blue,,reverse
@@ -51,8 +45,6 @@ yellow,8,
 yellow,8,
 yellow,9,
 yellow,9,
-yellow,,draw-two
-yellow,,draw-two
 yellow,,skip
 yellow,,skip
 yellow,,reverse
@@ -76,8 +68,6 @@ green,8,
 green,8,
 green,9,
 green,9,
-green,,draw-two
-green,,draw-two
 green,,skip
 green,,skip
 green,,reverse
@@ -101,8 +91,6 @@ red,8,
 red,8,
 red,9,
 red,9,
-red,,draw-two
-red,,draw-two
 red,,skip
 red,,skip
 red,,reverse

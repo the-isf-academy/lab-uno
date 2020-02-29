@@ -24,6 +24,6 @@ class Card(object):
         """ Defines how the object will be printed
         """
         if self.color:
-            return "{} {}".format(self.color, (self.special or self.number))
+            return "{} {}".format(self.color, (self.special or int(self.number)))
         else:
             return self.special
