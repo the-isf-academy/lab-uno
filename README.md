@@ -42,3 +42,4 @@ Some exceptions:
 * No scoring or stats are maintained over multiple games. [But this could make a great extension!]
 
 ## Lab
+You can find the lab documenting this assignment [here](https://cs.fablearn.org/labs/2-2-uno%20lab.html).
