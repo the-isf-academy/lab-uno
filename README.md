@@ -1,6 +1,8 @@
 # UNO - Card game lab
 The goal of this lab is to teach classes and objects through the implementation of a text-based game.
 
+This implementation of Uno is documented [here](https://cs.fablearn.org/docs/uno/).
+
 ## Setup
 After cloning the repository, run the following command in your Terminal:
 
