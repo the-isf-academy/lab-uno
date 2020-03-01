@@ -6,7 +6,9 @@
 from random import shuffle, choice
 
 class Player(object):
-    """A human or computer Player in a UnoGame.
+    """A human or computer Player in a UnoGame. This holds the basic details about
+    a player and also some functions that the UnoGame object uses to interact with
+    the Player.
 
     Args:
         name (str): the name of the player
@@ -58,7 +60,7 @@ class Player(object):
 
 class HumanPlayer(Player):
     """HummanPlayer extends the Player class. A HumanPlayer can do everything
-    a Player can do and more.
+    a Player can do and more: HumanPlayer gets input about choices from a user.
     """
 
     def choose_color(self):
@@ -92,7 +94,8 @@ class HumanPlayer(Player):
 
 class ComputerPlayer(Player):
     """ComputerPlayer extends the ComputerPlayer class. AComputerPlayer can do
-    everything a Player can do and more. Uses a basic (read: bad) strategy for choices.
+    everything a Player can do and more: ComputerPlayer uses a basic (read: bad)
+    strategy to make choices during a game.
     """
 
     def choose_color(self):
@@ -115,7 +118,7 @@ class ComputerPlayer(Player):
 class RandomComputerPlayer(ComputerPlayer):
     """RandomComputerPlayer extends the ComputerPlayer class.
     The RandomComputerPlayer overrides the ComputerPlayer choice functions to
-    randomly choose a color or valid card.
+    randomly choose a color or valid card (a much better, but still bad strategy).
     """
 
     def choose_color(self):

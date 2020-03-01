@@ -94,12 +94,12 @@ class TestUnoLab(unittest.TestCase):
             game_stats[winner] += 1
             sys.stdout = stdout
         print("\nTEST COMPLETE. GAME STATS:")
-        print("______________________")
-        print("| Player.......Win % |")
+        print("_______________________________")
+        print("| Player.................Win % |")
         for player, wins in game_stats.items():
             print("| {}...{}% |".format(player, round(wins/1000*100,2)))
-        print("|____________________|")
-        self.assertTrue(game_stats["Computer 0"]/1000 > 0.3)
+        print("|______________________________|")
+        self.assertTrue(game_stats["Computer 0 (student)"]/1000 > 0.3)
 
 
 unittest.main()

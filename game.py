@@ -11,7 +11,11 @@ from view import TerminalView
 import sys, getopt
 
 class UnoGame(object):
-    """Creates an instance of an UnoGame.
+    """Creates an instance of an UnoGame which runs the logic of the game to give
+    players turn, make sure players play valid cards, and determine when a player wins.
+    The UnoGame also enforces the rules of special cards in Uno like reverse or
+    draw four.
+
     Args:
         deck_file (str): The filepath to the deck of cards
         total_rounds (int): The number of rounds to play before ending the game
@@ -42,11 +46,11 @@ class UnoGame(object):
             computer_strategies.append("basic")
         for i, strategy_string in enumerate(computer_strategies[:(4-len(human_names))]):
             if strategy_string.lower() == "random":
-                self.players.append(RandomComputerPlayer("Computer {}".format(i)))
+                self.players.append(RandomComputerPlayer("Computer {} ({})".format(i, strategy_string)))
             elif strategy_string.lower() == "student":
-                self.players.append(StudentComputerPlayer("Computer {}".format(i)))
+                self.players.append(StudentComputerPlayer("Computer {} ({})".format(i, strategy_string)))
             else:
-                self.players.append(ComputerPlayer("Computer {}".format(i)))
+                self.players.append(ComputerPlayer("Computer {} ({})".format(i, strategy_string)))
 
     def play(self):
         """ Plays an uno game
@@ -212,10 +216,11 @@ class UnoGame(object):
             raise ValueError("UnoGame doesn't know how to play special card: {}".format(card.special))
         self.view.show_card_action(self.current_player(), self.next_player(), self.top_card)
 
-    # Define your draw_two function here
+    # Define your wild_draw_four() function here
 
 
     # Define your wild_draw_four() function here
+
 
 
 # -------------------- END OF PART 2️⃣ CODE ⬆️ --------------------
@@ -238,7 +243,7 @@ if __name__ == "__main__":
     opts, args = getopt.getopt(sys.argv[1:],"ah:c:f:t:")
     humans = ['Chris']
     computers = ['random']
-    deck_file = 'uno_cards.csv'
+    deck_file = 'uno_cards_basic.csv'
     turns = 100
     if len(opts) > 0:
         for opt, arg in opts:

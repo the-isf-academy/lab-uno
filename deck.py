@@ -8,7 +8,8 @@ from random import shuffle
 import pandas as pd
 
 class Deck(object):
-    """Creates a uno Deck object.
+    """Creates a uno Deck object. This reads in cards from a CSV file and stores them
+    for use by the UnoGame object.
 
     Args:
         filename (str): Path to the file containing uno cards as strings

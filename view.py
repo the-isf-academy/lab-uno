@@ -1,15 +1,12 @@
 
 class TerminalView:
     """Handles input and output from a Game.
-    This could be pedagogically valuable because it would simplify code in
-    `UnoGame` and because it would reinforce the idea that the same UnoGame could be
-    used as the backend of a GUI or web-based implementation.
-    Students could switch into a different mode while reading this file: here, it's about
-    re-skinning the game (e.g. making it snarky), whereas over in game.py it's about the
+    You should switch into a different mode while reading this file: here, it's about
+    the "skin" the game – like a user interface – whereas over in game.py it's about the
     algorithms and interactions.
-    It's also another straightforward example of objects interacting.
 
-    Most important point: The View has no idea what is going on.
+    Most important point: The View has no idea what is going on in the game, it
+    just give messages for particular events.
     """
 
 # ----------- 💻 PART 1️⃣: EDIT THE CODE HERE ⬇️ -----------
