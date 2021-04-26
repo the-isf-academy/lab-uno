@@ -200,6 +200,7 @@ class UnoGame(object):
 # ----------- 💻 PART 2️⃣: WRITE YOUR CODE HERE ⬇️ -----------
 
     # Edit this function to include calls to your special card functions
+    # The game expects the special cards in the following format: 'wild', 'skip', 'reverse', 'wild-draw-four', 'draw-two'
     def special_card_action(self, card):
         """ Deals with a special card's action
 
@@ -216,7 +217,7 @@ class UnoGame(object):
             raise ValueError("UnoGame doesn't know how to play special card: {}".format(card.special))
         self.view.show_card_action(self.current_player(), self.next_player(), self.top_card)
 
-    # Define your wild_draw_four() function here
+    # Define your draw_two() function here
 
 
     # Define your wild_draw_four() function here
