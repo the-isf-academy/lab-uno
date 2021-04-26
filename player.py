@@ -149,3 +149,71 @@ class StudentComputerPlayer(ComputerPlayer):
     """StudentComputerPlayer extends the ComputerPlayer class.
     Can you get your computer player to consistently win more than 30% of games?
     """
+
+    def choose_color(self):
+        color_list = []
+        color_dict = {}
+        for card in self.hand:
+            if card.color in color_dict:
+                color_dict[card.color] += 1
+            else:
+                color_dict[card.color] = 1
+            color_list.append(card.color)
+
+        mode = color_list[0]
+        for color,val in color_dict.items():
+            if val>color_dict[mode]:
+                mode = color
+
+        return mode
+
+    def choose_card(self, top_card):
+        valid_cards = self.get_valid_card_choices_from_hand(top_card)
+        chosen_card = None
+
+        if len(valid_cards['number']) > 0:
+            print('num')
+            chosen_card = choice(valid_cards['number'])
+        elif len(valid_cards['color']) > 0:
+            chosen_card = choice(valid_cards['color'])
+        elif len(valid_cards['special']) > 0:
+            chosen_card = choice(valid_cards['special'])
+        elif len(valid_cards['wild']) > 0:
+            chosen_card = choice(valid_cards['wild'])
+
+
+        if chosen_card != None:
+            self.hand.remove(chosen_card)
+
+        return chosen_card
+
+    def get_valid_card_choices_from_hand(self, top_card):
+        """ Check to see if the card is playable given the top card
+
+        Args:
+            top_card (Card): Card at the top of the deck
+
+        Returns:
+            (bool) for whether the card is playable
+        """
+        valid_cards = {
+            'number':[],
+            'color': [],
+            'wild' : [],
+            'special': []
+        }
+
+        for card in self.hand:
+            if card.special == "wild" or card.special == "wild-draw-four":
+                valid_cards['wild'].append(card)
+            elif(top_card.special != "" and top_card.special == card.special):
+                valid_cards['special'].append(card)
+            elif top_card.color == card.color:
+                valid_cards['color'].append(card)
+            elif top_card.number == card.number and top_card.special == "":
+                valid_cards['number'].append(card)
+            
+        return valid_cards
+
+
+
