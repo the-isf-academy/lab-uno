@@ -212,14 +212,24 @@ class UnoGame(object):
             self.skip()
         elif card.special == 'reverse':
             self.reverse()
+        elif card.special == 'draw-two':
+            self.draw_two()
+        elif card.special == 'wild-draw-four':
+            self.wild_draw_four()
         else:
             raise ValueError("UnoGame doesn't know how to play special card: {}".format(card.special))
         self.view.show_card_action(self.current_player(), self.next_player(), self.top_card)
 
+    # Define your draw_two() function here
+    def draw_two(self):
+        self.deal_n_cards(2, self.next_player())
+
     # Define your wild_draw_four() function here
+    def wild_draw_four(self):
+        self.wild()
+        self.deal_n_cards(4, self.next_player())
 
 
-    # Define your wild_draw_four() function here
 
 
 
@@ -241,10 +251,10 @@ def set_up_game():
 
 if __name__ == "__main__":
     opts, args = getopt.getopt(sys.argv[1:],"ah:c:f:t:")
-    humans = ['Chris']
-    computers = ['random']
-    deck_file = 'uno_cards_basic.csv'
-    turns = 100
+    humans = []
+    computers = ['student','student','student']
+    deck_file = 'uno_cards.csv'
+    turns = 25
     if len(opts) > 0:
         for opt, arg in opts:
             if opt == '-a':
