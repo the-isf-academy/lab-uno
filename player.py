@@ -5,7 +5,7 @@
 
 from random import shuffle, choice
 
-class Player(object):
+class Player:
     """A human or computer Player in a UnoGame. This holds the basic details about
     a player and also some functions that the UnoGame object uses to interact with
     the Player.
@@ -72,7 +72,7 @@ class HumanPlayer(Player):
             new_color = new_color.lower()
         return new_color
 
-    def choose_card(self, top_card):
+    def choose_card(self, view, top_card):
         """Asks the player to choose a card from hand and enforces the rules of Uno
 
         Args:
@@ -81,19 +81,31 @@ class HumanPlayer(Player):
         Returns:
             (Card) a valid choice of Card
         """
-        input("Press enter to see your hand.")
-        self.print_hand()
-        card_choice_num = "n"
-        while not card_choice_num.isdigit() or (int(card_choice_num) < 0 or int(card_choice_num) >= len(self.hand)):
-            card_choice_num = input("Input card number or type \'draw\' to draw new card: ")
-            if card_choice_num == "draw":
+
+        card_chosen = False
+
+        while card_chosen == False:
+            choice = view.menu("\n[Player Menu]",["Play Card", "Draw Card"])
+
+            if choice == "Play Card":
+                hand_for_view = []
+                for card in self.hand:
+                    hand_for_view.append(str(card))
+                card = view.menu("\n[Select a card]",hand_for_view)
+                card_index = hand_for_view.index(card)
+
+                card_choice = self.hand[card_index]
+
+                if card_choice not in self.hand:
+                    self.view.show_invalid_card(self.name,card_choice,top_card)
+
+                self.hand.remove(card_choice)
+                return card_choice
+            elif choice == "Draw Card":
                 return None
-        card_choice = self.hand[int(card_choice_num)]
-        self.hand.remove(card_choice)
-        return card_choice
 
 class ComputerPlayer(Player):
-    """ComputerPlayer extends the ComputerPlayer class. AComputerPlayer can do
+    """ComputerPlayer extends the ComputerPlayer class. A ComputerPlayer can do
     everything a Player can do and more: ComputerPlayer uses a basic (read: bad)
     strategy to make choices during a game.
     """
@@ -103,8 +115,8 @@ class ComputerPlayer(Player):
         """
         return "red"
 
-    def choose_card(self, top_card):
-        """ Plays one turn by randomly choosing a card from hand.
+    def choose_card(self):
+        """ Plays one turn by choosing the last card from hand.
 
         Args:
             hand (list of Card): the calling player's hand
@@ -121,31 +133,31 @@ class RandomComputerPlayer(ComputerPlayer):
     randomly choose a color or valid card (a much better, but still bad strategy).
     """
 
-    def choose_color(self):
-        """Asks the player to choose a color
-        """
-        return choice(["red","yellow","green","blue"])
+    # def choose_color(self):
+    #     """Asks the player to choose a color
+    #     """
+    #     return choice(["red","yellow","green","blue"])
 
-    def choose_card(self, top_card):
-        """ Plays one turn by randomly choosing a card from hand.
+    # def choose_card(self):
+    #     """ Plays one turn by randomly choosing a card from hand.
 
-        Args:
-            hand (list of Card): the calling player's hand
-            top_card (Card): the top card currently displayed on the deck
+    #     Args:
+    #         hand (list of Card): the calling player's hand
+    #         top_card (Card): the top card currently displayed on the deck
 
-        Returns:
-            (Card) a valid choice of Card
-        """
-        valid_choices = self.get_valid_card_choices_from_hand(top_card)
-        if len(valid_choices) > 0:
-            chosen_card = choice(valid_choices)
-            self.hand.remove(chosen_card)
-            return chosen_card
-        return None
+    #     Returns:
+    #         (Card) a valid choice of Card
+    #     """
+    #     valid_choices = self.get_valid_card_choices_from_hand(top_card)
+    #     if len(valid_choices) > 0:
+    #         chosen_card = choice(valid_choices)
+    #         self.hand.remove(chosen_card)
+    #         return chosen_card
+    #     return None
 
 # ----------- 💻 PART 3️⃣: WRITE YOUR CODE HERE ⬇️ -----------
 
-class StudentComputerPlayer(ComputerPlayer):
-    """StudentComputerPlayer extends the ComputerPlayer class.
+class StrategicComputerPlayer(ComputerPlayer):
+    """StrategicComputerPlayer extends the ComputerPlayer class.
     Can you get your computer player to consistently win more than 30% of games?
     """

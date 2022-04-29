@@ -1,3 +1,4 @@
+from simple_term_menu import TerminalMenu
 
 class TerminalView:
     """Handles input and output from a Game.
@@ -19,11 +20,35 @@ class TerminalView:
         "reverse": "Change directions!",
     }
 
+    def welcome(self):
+        print("-"*12)
+        print("--- UNO ---")
+        print("-"*12,"\n")
+
+    def get_input(self,prompt):
+        print(prompt)
+        response = input(" >")
+        return response
+
+    def menu(self,prompt, options):
+        '''This function creates an interactive Terminal menu.'''
+
+        print(prompt)
+        terminal_menu = TerminalMenu(options) #Creates the Terminal Menu 
+        option_num = terminal_menu.show() #Get user selected Option 
+
+        print(options[option_num],"\n")
+        return options[option_num]
+
+    def setup(self):
+        print("---- Dealing Cards ----")
+
     def show_beginning_turn(self, player, top_card):
         print("")
         print("----------------")
         print("The top card is {}.".format(top_card))
-        print("{}, it is your turn.".format(player.name))
+        print("----------------")
+        print("\n{}, it is your turn.".format(player.name))
 
     def show_played_card(self, player, card):
         print("{} played {}.".format(player.name, card))
@@ -53,3 +78,8 @@ class TerminalView:
     def show_card_action(self, player, next_player, card):
         message = self.CARD_ACTION_MESSAGES[card.special]
         print(message.format(player=player, next_player=next_player, card=card))
+
+    def end_game(self):
+        print("-"*25)
+        print("-"*25)
+

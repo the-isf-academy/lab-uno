@@ -5,12 +5,12 @@
 
 from deck import Deck
 from card import Card
-from player import HumanPlayer, ComputerPlayer, RandomComputerPlayer, StudentComputerPlayer
+from player import HumanPlayer, ComputerPlayer, RandomComputerPlayer, StrategicComputerPlayer
 from random import choice
 from view import TerminalView
 import sys, getopt
 
-class UnoGame(object):
+class UnoGame():
     """Creates an instance of an UnoGame which runs the logic of the game to give
     players turn, make sure players play valid cards, and determine when a player wins.
     The UnoGame also enforces the rules of special cards in Uno like reverse or
@@ -29,28 +29,31 @@ class UnoGame(object):
     ANTICLOCKWISE = -1
     COLORS = ["red", "blue", "green", "yellow"]
 
-    def __init__(self, human_names, computer_strategies, deck_file=None, total_turns=10):
-        self.view = TerminalView()
+    def __init__(self, game_view, human_names, computer_strategy, deck_file=None, total_turns=10):
+        self.view = game_view
         self.turns_remaining = total_turns
         self.deck = Deck(deck_file)
         self.discard = Deck()
         self.direction = self.CLOCKWISE
         self.current_player_index = 0
         self.top_card = self.deal_one_card()
+
         if "wild" in self.top_card.special:
             self.top_card.color = choice(self.COLORS)
         self.players = []
-        for name in human_names:
+
+        if human_names != None:
             self.players.append(HumanPlayer(name))
-        for i in range (4-len(human_names)-len(computer_strategies)):
-            computer_strategies.append("basic")
-        for i, strategy_string in enumerate(computer_strategies[:(4-len(human_names))]):
-            if strategy_string.lower() == "random":
-                self.players.append(RandomComputerPlayer("Computer {} ({})".format(i, strategy_string)))
-            elif strategy_string.lower() == "student":
-                self.players.append(StudentComputerPlayer("Computer {} ({})".format(i, strategy_string)))
+            
+        for i in range(1,3):
+            if computer_strategy == "random":
+                self.players.append(RandomComputerPlayer("Computer {}".format(i, computer_strategy)))
+
+            elif computer_strategy == "strategic":
+                self.players.append(StrategicComputerPlayer("Computer {}".format(i, computer_strategy)))
+
             else:
-                self.players.append(ComputerPlayer("Computer {} ({})".format(i, strategy_string)))
+                self.players.append(ComputerPlayer("Computer {}".format(i, computer_strategy)))
 
     def play(self):
         """ Plays an uno game
@@ -58,11 +61,16 @@ class UnoGame(object):
         Returns:
             (str) name of the game winner
         """
+        self.view.setup()
+
         self.deal_starting_cards()
+
         win = False
+
         while self.turns_remaining > 0 and not win:
             win = self.play_turn()
             self.turns_remaining -= 1
+
         if win:
             winner = self.players[self.current_player_index]
             self.view.show_winning_game(winner)
@@ -75,6 +83,7 @@ class UnoGame(object):
         if self.deck.get_num_cards() < self.START_CARDS*self.NUM_PLAYERS:
             self.view.show_out_of_cards()
             return False
+
         for i in range(self.START_CARDS):
             for player in self.players:
                 self.deal_one_card(player)
@@ -87,7 +96,15 @@ class UnoGame(object):
         """
         player = self.current_player()
         self.view.show_beginning_turn(player, self.top_card)
-        card = player.choose_card(self.top_card)
+
+        if type(player) == HumanPlayer:
+            card = player.choose_card(self.view,self.top_card)
+        else:
+            card = player.choose_card()
+
+
+
+
         if card:
             self.view.show_played_card(player, card)
             if self.valid_card_choice(card):
@@ -95,16 +112,19 @@ class UnoGame(object):
                     self.top_card.color = None   #reseting the color of the wild card before it goes into the discard pile
                 self.discard.add_card(self.top_card)
                 self.top_card = card
+
                 if len(player.hand) == 0:
                     return True
                 if card.special:
                     self.special_card_action(card)
+
             else:
                 self.view.show_invalid_card(player, card, self.top_card)
                 player.add_to_hand(card)
                 self.deal_n_cards(2, player)
         else:
             self.deal_n_cards(1, player)
+
         self.increment_player_num()
         return False
 
@@ -226,41 +246,33 @@ class UnoGame(object):
 
 # -------------------- END OF PART 2️⃣ CODE ⬆️ --------------------
 
-def set_up_game():
-    turns = input("How many turns do you want to play for? ")
-    deck_file = input("Input the filepath of the deck you want to use (enter to use basic deck): ").strip()
-    if not deck_file:
-        deck_file = "uno_cards_basic.csv"
-    no_players = input("How many human players (up to 4)? ")
-    names = []
-    for i in range(int(no_players)):
-        names.append(input("What is the name of human player {}? ".format(i)))
-    computer_strategies = []
-    for i in range(4-int(no_players)):
-        computer_strategies.append(input("What strategy should Computer{} use (enter for basic strategy)? ".format(i)))
-    return UnoGame(names, computer_strategies, deck_file, int(turns))
 
 if __name__ == "__main__":
-    opts, args = getopt.getopt(sys.argv[1:],"ah:c:f:t:")
-    humans = ['Chris']
-    computers = ['random']
-    deck_file = 'uno_cards_basic.csv'
-    turns = 100
-    if len(opts) > 0:
-        for opt, arg in opts:
-            if opt == '-a':
-                game = UnoGame(humans, computers, deck_file, turns)
-                game.play()
-                sys.exit(2)
-            if opt == '-h':
-                humans = arg.split('-')
-            if opt == '-c':
-                computers = arg.split('-')
-            if opt == '-f':
-                deck_file = arg
-            if opt == '-t':
-                turns = arg
-        game = UnoGame(humans, computers, deck_file, turns)
+    view = TerminalView()
+
+    view.welcome()
+
+    rounds = int(view.get_input("How many rounds do you want to play for?"))
+
+    deck_file = view.menu("Choose a deck",["basic deck","special deck"])
+
+    if deck_file == "basic deck":
+        deck_file = "uno_cards_basic.csv"
+    elif deck_file == "special deck":
+        deck_file = "uno_cards_special_no_draw.csv"
+    
+    human_players = view.menu("Do you want a human player?",["yes","no"])
+    if human_players == "yes":
+        name = view.get_input("What is your name?")
     else:
-        game = set_up_game()
+        name = None
+
+    computer_strategy = view.menu("What strategy should the Computers use? ",["basic","random","strategic"])
+    
+
+    game = UnoGame(view, name, computer_strategy, deck_file, rounds*3)
+
     game.play()
+
+    view.end_game()
+
