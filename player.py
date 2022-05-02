@@ -133,31 +133,12 @@ class RandomComputerPlayer(ComputerPlayer):
     randomly choose a color or valid card (a much better, but still bad strategy).
     """
 
-    # def choose_color(self):
-    #     """Asks the player to choose a color
-    #     """
-    #     return choice(["red","yellow","green","blue"])
+    ### 💻 YOUR CODE GOES HERE 💻 ###
 
-    # def choose_card(self):
-    #     """ Plays one turn by randomly choosing a card from hand.
-
-    #     Args:
-    #         hand (list of Card): the calling player's hand
-    #         top_card (Card): the top card currently displayed on the deck
-
-    #     Returns:
-    #         (Card) a valid choice of Card
-    #     """
-    #     valid_choices = self.get_valid_card_choices_from_hand(top_card)
-    #     if len(valid_choices) > 0:
-    #         chosen_card = choice(valid_choices)
-    #         self.hand.remove(chosen_card)
-    #         return chosen_card
-    #     return None
-
-# ----------- 💻 PART 3️⃣: WRITE YOUR CODE HERE ⬇️ -----------
 
 class StrategicComputerPlayer(ComputerPlayer):
     """StrategicComputerPlayer extends the ComputerPlayer class.
     Can you get your computer player to consistently win more than 30% of games?
     """
+
+    ### 💻 YOUR CODE GOES HERE 💻 ###
