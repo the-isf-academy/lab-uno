@@ -258,12 +258,14 @@ if __name__ == "__main__":
 
     rounds = int(view.get_input("How many rounds do you want to play for?"))
 
-    deck_file = view.menu("Choose a deck",["basic deck","special deck"])
+    deck_file = view.menu("Choose a deck",["basic deck","special no draw deck","special with draw deck"])
 
     if deck_file == "basic deck":
         deck_file = "uno_cards_basic.csv"
-    elif deck_file == "special deck":
+    elif deck_file == "special no draw deck":
         deck_file = "uno_cards_special_no_draw.csv"
+    elif deck_file == "special with draw deck":
+        deck_file = "uno_cards_special_with_draw.csv"
     
     human_players = view.menu("Do you want a human player?",["yes","no"])
     if human_players == "yes":
