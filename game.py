@@ -29,7 +29,7 @@ class UnoGame():
     ANTICLOCKWISE = -1
     COLORS = ["red", "blue", "green", "yellow"]
 
-    def __init__(self, game_view, human_names, computer_strategy, deck_file=None, total_turns=10):
+    def __init__(self, game_view, human_names, computer_strategies, deck_file=None, total_turns=10):
         self.view = game_view
         self.turns_remaining = total_turns
         self.deck = Deck(deck_file)
@@ -45,15 +45,15 @@ class UnoGame():
         if human_names != None:
             self.players.append(HumanPlayer(name))
             
-        for i in range(1,3):
-            if computer_strategy == "random":
-                self.players.append(RandomComputerPlayer("Computer {}".format(i, computer_strategy)))
+        for i in range(1,len(computer_strategies)):
+            if computer_strategies[i] == "random":
+                self.players.append(RandomComputerPlayer("Computer {}".format(i, computer_strategies[i])))
 
-            elif computer_strategy == "strategic":
-                self.players.append(StrategicComputerPlayer("Computer {}".format(i, computer_strategy)))
+            elif computer_strategies[i] == "strategic":
+                self.players.append(StrategicComputerPlayer("Computer {}".format(i, computer_strategies[i])))
 
             else:
-                self.players.append(ComputerPlayer("Computer {}".format(i, computer_strategy)))
+                self.players.append(ComputerPlayer("Computer {}".format(i, computer_strategies[i])))
 
     def play(self):
         """ Plays an uno game
@@ -243,7 +243,6 @@ class UnoGame():
 
     # Define draw_two() method here
 
-
     # Define wild_draw_four() method here
 
 
@@ -268,15 +267,22 @@ if __name__ == "__main__":
         deck_file = "uno_cards_special_with_draw.csv"
     
     human_players = view.menu("Do you want a human player?",["yes","no"])
+
     if human_players == "yes":
         name = view.get_input("What is your name?")
+        num_computers = 2
+
     else:
         name = None
+        num_computers = 3
 
-    computer_strategy = view.menu("What strategy should the Computers use? ",["basic","random","strategic"])
+    computer_strategies = []
+    
+    for i in range(num_computers):
+        computer_strategies.append(view.menu("What strategy should the Computers use? ",["basic","random","strategic"]))
     
 
-    game = UnoGame(view, name, computer_strategy, deck_file, rounds*3)
+    game = UnoGame(view, name, computer_strategies, deck_file, rounds*3)
 
     game.play()
 

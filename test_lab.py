@@ -1,5 +1,5 @@
 # Testing file for bank lab
-# By: Chris Proctor and Jacob Wolf
+# By: Chris Proctor and Jacob Wolf and Emma Brown
 
 # =============================================================================
 # ☕️ More-Than-You-Need-To-Know Lounge ☕️
@@ -24,6 +24,7 @@ from collections import defaultdict
 
 from game import UnoGame
 from card import Card
+from view import TerminalView
 
 class TestUnoLab(unittest.TestCase):
 
@@ -31,7 +32,7 @@ class TestUnoLab(unittest.TestCase):
         """
         Test checking the implementation of the draw_two() function.
         """
-        game = UnoGame([], ['','','',''], "uno_cards.csv", 10)
+        game = UnoGame(TerminalView(), None,['basic','basic','basic'], "uno_cards_special_with_draw.csv", 10)
         draw_two = Card("red", None, "draw-two")
         game.top_card = draw_two
         game.special_card_action(draw_two)
@@ -49,14 +50,15 @@ class TestUnoLab(unittest.TestCase):
         game.top_card = draw_two
         game.special_card_action(draw_two)
         next_player = game.next_player()
-        self.assertTrue(len(next_player.hand) == 2)
+
+        self.assertTrue(len(next_player.hand) == 4)
 
 
     def test_wild_draw_four(self):
         """
         Test checking the implementation of the wild_draw_four() function.
         """
-        game = UnoGame([], ['','','',''], "uno_cards.csv", 10)
+        game = UnoGame(TerminalView(), None,'basic', "uno_cards_special_with_draw.csv", 10)
         wild_draw_four = Card(None, None, "wild-draw-four")
         game.top_card = wild_draw_four
         game.special_card_action(wild_draw_four)
@@ -76,8 +78,8 @@ class TestUnoLab(unittest.TestCase):
         game.top_card = wild_draw_four
         game.special_card_action(wild_draw_four)
         next_player = game.next_player()
-        self.assertTrue(len(next_player.hand) == 4)
-        
+        self.assertTrue(len(next_player.hand) == 8)
+
 
     def test_strategy(self):
         """
@@ -90,7 +92,9 @@ class TestUnoLab(unittest.TestCase):
         for i in tqdm(range(1000)):
             stdout = sys.stdout
             sys.stdout = io.StringIO()
-            game = UnoGame([], ['student','random','random','random'], "uno_cards.csv", 500)
+            game = UnoGame(TerminalView(), None,['basic','basic','basic'], "uno_cards_special_with_draw.csv", 10)
+
+            game = UnoGame([], ['strategic','random','random','random'], "uno_cards.csv", 500)
             winner = game.play()
             game_stats[winner] += 1
             sys.stdout = stdout
