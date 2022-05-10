@@ -44,16 +44,16 @@ class UnoGame():
 
         if human_names != None:
             self.players.append(HumanPlayer(name))
-            
-        for i in range(1,len(computer_strategies)):
+
+        for i in range(0,len(computer_strategies)):
             if computer_strategies[i] == "random":
-                self.players.append(RandomComputerPlayer("Computer {}".format(i, computer_strategies[i])))
+                self.players.append(RandomComputerPlayer("Computer {} ({})".format(i, computer_strategies[i])))
 
             elif computer_strategies[i] == "strategic":
-                self.players.append(StrategicComputerPlayer("Computer {}".format(i, computer_strategies[i])))
+                self.players.append(StrategicComputerPlayer("Computer {} ({})".format(i, computer_strategies[i])))
 
             else:
-                self.players.append(ComputerPlayer("Computer {}".format(i, computer_strategies[i])))
+                self.players.append(ComputerPlayer("Computer {} ({})".format(i, computer_strategies[i])))
 
     def play(self):
         """ Plays an uno game
@@ -100,7 +100,7 @@ class UnoGame():
         if type(player) == HumanPlayer:
             card = player.choose_card(self.view,self.top_card)
         else:
-            card = player.choose_card()
+            card = player.choose_card(self.top_card)
 
 
 
@@ -229,6 +229,10 @@ class UnoGame():
             self.skip()
         elif card.special == 'reverse':
             self.reverse()
+        elif card.special == 'draw-two':
+            self.draw_two()
+        elif card.special == 'wild-draw-four':
+            self.wild_draw_four()
 
         ### 💻 YOUR CODE GOES HERE 💻 ###
         # Edit this function to include calls to your special card functions
@@ -238,13 +242,17 @@ class UnoGame():
             raise ValueError("UnoGame doesn't know how to play special card: {}".format(card.special))
         self.view.show_card_action(self.current_player(), self.next_player(), self.top_card)
 
-    
+
     ### 💻 YOUR CODE GOES HERE 💻 ###
 
     # Define draw_two() method here
+    def draw_two(self):
+        self.deal_n_cards(2,self.next_player())
 
     # Define wild_draw_four() method here
-
+    def wild_draw_four(self):
+        self.deal_n_cards(4,self.next_player())
+        self.wild()
 
 
 # -------------------- END OF PART 2️⃣ CODE ⬆️ --------------------
@@ -265,7 +273,7 @@ if __name__ == "__main__":
         deck_file = "uno_cards_special_no_draw.csv"
     elif deck_file == "special with draw deck":
         deck_file = "uno_cards_special_with_draw.csv"
-    
+
     human_players = view.menu("Do you want a human player?",["yes","no"])
 
     if human_players == "yes":
@@ -277,14 +285,13 @@ if __name__ == "__main__":
         num_computers = 3
 
     computer_strategies = []
-    
+
     for i in range(num_computers):
         computer_strategies.append(view.menu("What strategy should the Computers use? ",["basic","random","strategic"]))
-    
+
 
     game = UnoGame(view, name, computer_strategies, deck_file, rounds*3)
 
     game.play()
 
     view.end_game()
-

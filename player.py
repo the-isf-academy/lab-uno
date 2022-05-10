@@ -115,7 +115,7 @@ class ComputerPlayer(Player):
         """
         return "red"
 
-    def choose_card(self):
+    def choose_card(self,top_card):
         """ Plays one turn by choosing the last card from hand.
 
         Args:
@@ -136,9 +136,12 @@ class RandomComputerPlayer(ComputerPlayer):
     ### 💻 YOUR CODE GOES HERE 💻 ###
 
 
+
+
 class StrategicComputerPlayer(ComputerPlayer):
     """StrategicComputerPlayer extends the ComputerPlayer class.
     Can you get your computer player to consistently win more than 30% of games?
     """
 
     ### 💻 YOUR CODE GOES HERE 💻 ###
+ 

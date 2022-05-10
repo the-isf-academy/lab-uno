@@ -58,7 +58,7 @@ class TestUnoLab(unittest.TestCase):
         """
         Test checking the implementation of the wild_draw_four() function.
         """
-        game = UnoGame(TerminalView(), None,'basic', "uno_cards_special_with_draw.csv", 10)
+        game = UnoGame(TerminalView(), None,['basic','basic','basic'], "uno_cards_special_with_draw.csv", 10)
         wild_draw_four = Card(None, None, "wild-draw-four")
         game.top_card = wild_draw_four
         game.special_card_action(wild_draw_four)
@@ -78,7 +78,7 @@ class TestUnoLab(unittest.TestCase):
         game.top_card = wild_draw_four
         game.special_card_action(wild_draw_four)
         next_player = game.next_player()
-        self.assertTrue(len(next_player.hand) == 8)
+        self.assertTrue(len(next_player.hand) == 4)
 
 
     def test_strategy(self):
@@ -87,24 +87,25 @@ class TestUnoLab(unittest.TestCase):
         """
         print("\n\nTESTING STUDENT'S COMPUTER STRATEGY.")
         print("STUDENT'S COMPUTER STRATEGY SHOULD WIN AT LEAST 30% OF GAMES.")
-        print("PLAYING 1000 STUDENT (Computer O) vs RANDOM GAMES:")
+        print("PLAYING 1000 Strategy (Computer O) vs RANDOM GAMES:")
         game_stats = defaultdict(lambda : 0)
         for i in tqdm(range(1000)):
             stdout = sys.stdout
             sys.stdout = io.StringIO()
-            game = UnoGame(TerminalView(), None,['basic','basic','basic'], "uno_cards_special_with_draw.csv", 10)
 
-            game = UnoGame([], ['strategic','random','random','random'], "uno_cards.csv", 500)
+            game = UnoGame(TerminalView(), None, ['strategic','random','random','random'],  "uno_cards_special_with_draw.csv", 500)
+  
             winner = game.play()
             game_stats[winner] += 1
             sys.stdout = stdout
+
         print("\nTEST COMPLETE. GAME STATS:")
         print("_______________________________")
         print("| Player.................Win % |")
         for player, wins in game_stats.items():
             print("| {}...{}% |".format(player, round(wins/1000*100,2)))
         print("|______________________________|")
-        self.assertTrue(game_stats["Computer 0 (student)"]/1000 > 0.3)
+        self.assertTrue(game_stats["Computer 0 (strategic)"]/1000 > 0.3)
 
 
 unittest.main()
