@@ -51,7 +51,7 @@ class TestUnoLab(unittest.TestCase):
         game.special_card_action(draw_two)
         next_player = game.next_player()
 
-        self.assertTrue(len(next_player.hand) == 4)
+        self.assertTrue(len(next_player.hand) == 2)
 
 
     def test_wild_draw_four(self):
@@ -86,15 +86,16 @@ class TestUnoLab(unittest.TestCase):
         Test to see if student strategy can beat the random strategy
         """
         print("\n\nTESTING STUDENT'S COMPUTER STRATEGY.")
-        print("STUDENT'S COMPUTER STRATEGY SHOULD WIN AT LEAST 30% OF GAMES.")
-        print("PLAYING 1000 Strategy (Computer O) vs RANDOM GAMES:")
+        print("STUDENT'S COMPUTER STRATEGY SHOULD WIN A HIGHER PERCENTAGE OF GAMES THAN THE RANDOM STRATEGY.")
+        print("PLAYING 1000 Strategy (Computer O) vs RANDOM (Computer 1) GAMES :")
+
         game_stats = defaultdict(lambda : 0)
         for i in tqdm(range(1000)):
             stdout = sys.stdout
             sys.stdout = io.StringIO()
 
-            game = UnoGame(TerminalView(), None, ['strategic','random','random','random'],  "uno_cards_special_with_draw.csv", 500)
-  
+            game = UnoGame(TerminalView(), None, ['strategic','random'],  "uno_cards_special_with_draw.csv", 500)
+
             winner = game.play()
             game_stats[winner] += 1
             sys.stdout = stdout
